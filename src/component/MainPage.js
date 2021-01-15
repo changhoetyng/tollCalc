@@ -1,0 +1,141 @@
+import React, { Component } from "react";
+import { Autocomplete, GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
+import "./MainPageStyle.css";
+import {googleMapsApiKey} from "../information/Information"
+import {checkRoutes} from "../function/checkRoutes"
+import checkTolls from "../function/checkTolls"
+
+const containerStyle = {
+  width: "400px",
+  height: "400px",
+};
+
+const center = {
+  lat: 3.1390,
+  lng: 101.6869,
+};
+
+class MainPage extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      origin: null,
+      destination: null,
+      test: "",
+      response: null,
+    };
+    this.originOnLoad = this.originOnLoad.bind(this);
+    this.originOnPlaceChanged = this.originOnPlaceChanged.bind(this);
+    this.destinationOnLoad = this.destinationOnLoad.bind(this);
+    this.destinationOnPlaceChanged = this.destinationOnPlaceChanged.bind(this);
+    this.calculateRoute = this.calculateRoute.bind(this);
+  }
+
+  destinationOnLoad(destination) {
+    this.setState({destination})
+  }
+
+  destinationOnPlaceChanged(){
+    if (this.state.destination !== null) {
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  }
+
+  originOnLoad(origin) {
+    this.setState({origin})
+  }
+
+  originOnPlaceChanged() {
+    if (this.state.origin !== null) {
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  }
+
+  calculateRoute() {
+    var directionsService = new window.google.maps.DirectionsService();
+    var request = {
+      destination: this.state.destination.getPlace().place_id ? { placeId: this.state.destination.getPlace().place_id} : this.state.destination.getPlace().name,
+      origin: this.state.origin.getPlace().place_id ? { placeId: this.state.origin.getPlace().place_id} : this.state.origin.getPlace().name,
+      travelMode: 'DRIVING'
+    }
+    directionsService.route(request, (response, status) => {
+      console.log(response)
+      // console.log(response.routes[0].overview_polyline)
+      if (status === 'OK') {
+        var decoded_polyline = new window.google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
+        var polyline_arr = JSON.parse(JSON.stringify(decoded_polyline))
+        // console.log(polyline_arr)
+        var highways = checkRoutes(response)
+        this.setState({response});
+        checkTolls(polyline_arr,highways)
+      }
+    });
+  }
+
+  render() {
+    return (
+      <div className="mainDiv">
+        <LoadScript
+          libraries={["places"]}
+          googleMapsApiKey={googleMapsApiKey}
+        >
+          <p>Testing</p>
+          <label>Origin:</label>
+          <Autocomplete
+            onLoad={this.originOnLoad}
+            onPlaceChanged={this.originOnPlaceChanged}
+          >
+            <input
+              type="text"
+            />
+          </Autocomplete>
+          <br />
+          <label>
+            Destination:
+            <Autocomplete
+            onLoad={this.destinationOnLoad}
+            onPlaceChanged={this.destinationOnPlaceChanged}
+          >
+            <input
+              type="text"
+            />
+          </Autocomplete>
+          </label>
+          <br />
+          <button type="button" onClick={this.calculateRoute}>
+            Build Route
+          </button>
+          {/* {this.state.show && 
+          <DirectionsService 
+            options={{
+              destination: this.state.destination.getPlace().place_id ? { placeId: this.state.destination.getPlace().place_id} : this.state.destination.getPlace().name,
+              origin: this.state.origin.getPlace().place_id ? { placeId: this.state.origin.getPlace().place_id} : this.state.origin.getPlace().name,
+              travelMode: 'DRIVING'
+            }}
+            callback={this.directionsCallback}
+          />} */}
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={10}
+          >
+            {
+              this.state.response !== null && (
+                <DirectionsRenderer 
+                  options={{
+                    directions: this.state.response
+                  }}
+                />
+              )
+            }
+          </GoogleMap>
+        </LoadScript>
+      </div>
+    );
+  }
+}
+
+export default MainPage;
