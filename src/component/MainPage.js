@@ -25,6 +25,13 @@ class MainPage extends Component {
       destination: null,
       test: "",
       response: null,
+      totalPrice: {
+        class1: 0,
+        class2: 0,
+        class3: 0,
+        class4: 0,
+        class5: 0
+      }
     };
     this.originOnLoad = this.originOnLoad.bind(this);
     this.originOnPlaceChanged = this.originOnPlaceChanged.bind(this);
@@ -65,7 +72,7 @@ class MainPage extends Component {
     directionsService.route(request, (response, status) => {
       if (status === 'OK') {
         // console.log(response)
-        // console.log(response.routes[0].overview_polyline)
+        console.log(response.routes[0].overview_polyline)
         var decoded_polyline = new window.google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
         var polyline_arr = JSON.parse(JSON.stringify(decoded_polyline))
         // console.log(polyline_arr)
@@ -85,7 +92,7 @@ class MainPage extends Component {
           libraries={["places"]}
           googleMapsApiKey={googleMapsApiKey}
         >
-          <p>Testing</p>
+          <p>Simple Toll Calculator</p>
           <label>Origin:</label>
           <Autocomplete
             onLoad={this.originOnLoad}
@@ -136,6 +143,14 @@ class MainPage extends Component {
             }
           </GoogleMap>
         </LoadScript>
+            <div>
+              <h1>Price</h1>
+              <p>Class 1 Vehicle: RM{this.state.totalPrice.class1.toFixed(2)}</p>
+              <p>Class 2 Vehicle: RM{this.state.totalPrice.class2.toFixed(2)}</p>
+              <p>Class 3 Vehicle: RM{this.state.totalPrice.class3.toFixed(2)}</p>
+              <p>Class 4 Vehicle: RM{this.state.totalPrice.class4.toFixed(2)}</p>
+              <p>Class 5 Vehicle: RM{this.state.totalPrice.class5.toFixed(2)}</p>
+            </div>
       </div>
     );
   }

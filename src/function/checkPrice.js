@@ -19,6 +19,7 @@ function checkTolls(tolls, highways) {
         })
     })
     console.log(price)
+    return price
 }
 
 export default checkTolls;

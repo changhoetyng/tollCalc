@@ -4,12 +4,16 @@ export const tollCoordinates = [
     data: {
       "Puchong Selatan": {
         firstIntersect: {
-          lat: 2.98107,
-          lng: 101.63611,
+          lat1: 2.98107,
+          lng1: 101.63611,
+          lat2: 2.98192,
+          lng2: 101.63575
         },
         secondIntersect: {
-          lat: 2.98137,
-          lng: 101.63565,
+          lat1: 2.98137,
+          lng1: 101.63565,
+          lat2: 2.98134,
+          lng2: 101.63677
         },
         price: {
           class1: 2.10,
@@ -19,6 +23,23 @@ export const tollCoordinates = [
           class5: 1.60,
         }
       },
+      "Puchong Barat": {
+        firstIntersect: {
+          lat1: 3.02055,
+          lng1: 101.60279,
+        },
+        secondIntersect: {
+          lat1: 3.02055,
+          lng1: 101.60169,
+        },
+        price: {
+          class1: 2.10,
+          class2: 4.20,
+          class3: 6.30,
+          class4: 1.10,
+          class5: 1.60,
+        }
+      }
     },
   },
   {
@@ -26,12 +47,16 @@ export const tollCoordinates = [
     data: {
       "Plaza Toll Sunway": {
         firstIntersect: {
-          lat: 3.05799,
-          lng: 101.60872
+          lat1: 3.05799,
+          lng1: 101.60872,
+          lat2: 3.05925,
+          lng2: 101.60785
         },
         secondIntersect: {
-          lat: 3.05876,
-          lng: 101.60678
+          lat1: 3.05876,
+          lng1: 101.60678,
+          lat2: 3.05885,
+          lng2: 101.60900
         },
         price: {
           class1: 2.00,
