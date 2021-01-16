@@ -1,4 +1,4 @@
-import {highwaysName} from '../information/highways'
+import {tollCoordinates} from '../information/highways'
 
 export const checkRoutes = (response) => {
     var highways = []
@@ -6,8 +6,8 @@ export const checkRoutes = (response) => {
         route.legs.forEach((leg,i) => {
             leg.steps.forEach((step,i) => {
                 if(step.instructions.includes("Toll road")){
-                    highwaysName.forEach((name,i) => {
-                        if(step.instructions.includes(name)){
+                    tollCoordinates.forEach((name,i) => {
+                        if(step.instructions.includes(name.highway)){
                             highways.push(name);
                         }
                     })

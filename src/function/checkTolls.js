@@ -1,17 +1,19 @@
 function checkTolls(polyline_arr,highways) {
-    var breakException = {}
-      try{
-      polyline_arr.forEach(function(v,i,arr){
-        console.log(v)
-        if (parseFloat(v.lat.toFixed(5)) === 2.98192 && parseFloat(v.lng.toFixed(5)) === 101.63575) {
-          if(parseFloat(arr[i+1].lat.toFixed(5)) === 2.98134 && parseFloat(arr[i+1].lng.toFixed(5)) === 101.63677){
-            throw breakException;
-          }
-        }
+  // highways.forEach((v)=>{console.log(v)})
+    var tolls = []
+      polyline_arr.forEach(function(polyline,i,arr){
+        highways.forEach(highway => {
+          Object.entries(highway.data).map(([key,value]) => {
+            // console.log(value)
+            if (parseFloat(polyline.lat.toFixed(5)) === value.firstIntersect.lat && parseFloat(polyline.lng.toFixed(5)) === value.firstIntersect.lng) {
+              if(parseFloat(arr[i+1].lat.toFixed(5)) === value.secondIntersect.lat && parseFloat(arr[i+1].lng.toFixed(5)) === value.secondIntersect.lng){
+                tolls.push({highway: highway.highway, toll:key})
+              }
+            }
+          })
+        })
       })
-    } catch(e) {
-      if(e === breakException){console.log("puchong south toll")}
-    }
+    return tolls
 }
 
 export default checkTolls

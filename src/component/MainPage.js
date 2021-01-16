@@ -4,6 +4,7 @@ import "./MainPageStyle.css";
 import {googleMapsApiKey} from "../information/Information"
 import {checkRoutes} from "../function/checkRoutes"
 import checkTolls from "../function/checkTolls"
+import checkPrice from "../function/checkPrice"
 
 const containerStyle = {
   width: "400px",
@@ -62,15 +63,17 @@ class MainPage extends Component {
       travelMode: 'DRIVING'
     }
     directionsService.route(request, (response, status) => {
-      console.log(response)
-      // console.log(response.routes[0].overview_polyline)
       if (status === 'OK') {
+        // console.log(response)
+        // console.log(response.routes[0].overview_polyline)
         var decoded_polyline = new window.google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
         var polyline_arr = JSON.parse(JSON.stringify(decoded_polyline))
         // console.log(polyline_arr)
         var highways = checkRoutes(response)
         this.setState({response});
-        checkTolls(polyline_arr,highways)
+        var tolls = checkTolls(polyline_arr,highways)
+        var totalPrice = checkPrice(tolls,highways)
+        this.setState({highways, tolls, totalPrice})
       }
     });
   }
