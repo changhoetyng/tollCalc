@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Autocomplete, GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
 import "./MainPageStyle.css";
-import {googleMapsApiKey} from "../information/Information"
+import {googleMapsApiKey} from "../information/information"
 import {checkRoutes} from "../function/checkRoutes"
 import checkTolls from "../function/checkTolls"
 import checkPrice from "../function/checkPrice"
