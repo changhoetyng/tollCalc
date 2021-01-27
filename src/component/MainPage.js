@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Autocomplete, GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
 import "./MainPageStyle.css";
-import {googleMapsApiKey} from "../information/information"
 import {checkRoutes} from "../function/checkRoutes"
 import checkTolls from "../function/checkTolls"
 import checkPrice from "../function/checkPrice"
+import Modal from 'react-bootstrap/Modal'
+import Card from 'react-bootstrap/Card'
+import { Row } from "react-bootstrap";
 
 const containerStyle = {
   width: "400px",
@@ -23,6 +25,7 @@ class MainPage extends Component {
     this.state = {
       origin: null,
       destination: null,
+      modalOn: false,
       test: "",
       response: null,
       totalPrice: {
@@ -80,19 +83,23 @@ class MainPage extends Component {
         this.setState({response});
         var tolls = checkTolls(polyline_arr,highways)
         var totalPrice = checkPrice(tolls,highways)
-        this.setState({highways, tolls, totalPrice})
+        this.setState({highways, tolls, totalPrice, modalOn: true})
       }
     });
   }
+
+hideModal() {
+  this.setState({modalOn: false})
+}
 
   render() {
     return (
       <div className="mainDiv">
         <LoadScript
           libraries={["places"]}
-          googleMapsApiKey={googleMapsApiKey}
+          googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
         >
-          <p>Simple Toll Calculator</p>
+          <p>Simple Closed Toll Calculator</p>
           <label>Origin:</label>
           <Autocomplete
             onLoad={this.originOnLoad}
@@ -118,6 +125,29 @@ class MainPage extends Component {
           <button type="button" onClick={this.calculateRoute}>
             Build Route
           </button>
+
+          <div className="container" style={{justifyContents: "center", marginTop: 20}}>
+            <h4>Supported Tolls</h4>
+            <Row>
+            <Card style={{ width: '18rem' }}>
+              <Card.Body>
+                <Card.Title>LDP - E11</Card.Title>
+                <Card.Text>
+                  Puchong Selatan <br />
+                  Puchong Barat
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <Card style={{ width: '18rem', marginLeft: 10 }}>
+              <Card.Body>
+                <Card.Title>KESAS - E5</Card.Title>
+                <Card.Text>
+                  Plaza Toll Sunway
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            </Row>
+          </div>
           {/* {this.state.show && 
           <DirectionsService 
             options={{
@@ -127,10 +157,19 @@ class MainPage extends Component {
             }}
             callback={this.directionsCallback}
           />} */}
-          <GoogleMap
+          
+        </LoadScript>
+        <Modal show={this.state.modalOn} onHide={() => this.hideModal()} centered>
+        <Modal.Header>
+            <Modal.Title>Details</Modal.Title>
+          </Modal.Header>
+            <Modal.Body>
+              <h4>Route</h4>
+            <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
             zoom={10}
+            style={{alignSelf: "center"}}
           >
             {
               this.state.response !== null && (
@@ -142,15 +181,14 @@ class MainPage extends Component {
               )
             }
           </GoogleMap>
-        </LoadScript>
-            <div>
-              <h1>Price</h1>
+          <h4>Toll Fare</h4>
               <p>Class 1 Vehicle: RM{this.state.totalPrice.class1.toFixed(2)}</p>
               <p>Class 2 Vehicle: RM{this.state.totalPrice.class2.toFixed(2)}</p>
               <p>Class 3 Vehicle: RM{this.state.totalPrice.class3.toFixed(2)}</p>
               <p>Class 4 Vehicle: RM{this.state.totalPrice.class4.toFixed(2)}</p>
               <p>Class 5 Vehicle: RM{this.state.totalPrice.class5.toFixed(2)}</p>
-            </div>
+            </Modal.Body>
+          </Modal>
       </div>
     );
   }
